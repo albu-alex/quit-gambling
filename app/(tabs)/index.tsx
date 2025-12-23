@@ -1,98 +1,301 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
-
-import { HelloWave } from '@/components/hello-wave';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Link } from 'expo-router';
+import { useRouter } from 'expo-router';
+import React, { useEffect, useState } from 'react';
+import {
+    Alert,
+    SafeAreaView,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
+} from 'react-native';
+import { Button } from '../../src/components/atoms/Button';
+import { Card } from '../../src/components/atoms/Card';
+import { StatBox } from '../../src/components/atoms/StatBox';
+import { CheckInCard } from '../../src/components/molecules/CheckInCard';
+import { StreakHeader } from '../../src/components/molecules/StreakHeader';
+import { COLORS, SPACING, TYPOGRAPHY } from '../../src/constants/config';
+import { StreakCalculator } from '../../src/domain/streak/StreakCalculator';
+import { useUserStore } from '../../src/stores/userStore';
 
 export default function HomeScreen() {
-  return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <Link href="/modal">
-          <Link.Trigger>
-            <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction title="Action" icon="cube" onPress={() => alert('Action pressed')} />
-            <Link.MenuAction
-              title="Share"
-              icon="square.and.arrow.up"
-              onPress={() => alert('Share pressed')}
-            />
-            <Link.Menu title="More" icon="ellipsis">
-              <Link.MenuAction
-                title="Delete"
-                icon="trash"
-                destructive
-                onPress={() => alert('Delete pressed')}
-              />
-            </Link.Menu>
-          </Link.Menu>
-        </Link>
+  const router = useRouter();
+  const userStore = useUserStore();
+  const [showCheckInPrompt, setShowCheckInPrompt] = useState(false);
 
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+  const {
+    currentStreak,
+    longestStreak,
+    lastCheckInDate,
+    onboardingAnswers,
+    recordCheckIn,
+    shouldPromptCheckIn,
+  } = userStore;
+
+  // Check if should show check-in prompt on mount
+  useEffect(() => {
+    if (shouldPromptCheckIn()) {
+      setShowCheckInPrompt(true);
+    }
+  }, []);
+
+  const handleCheckIn = async (gambled: boolean) => {
+    try {
+      await recordCheckIn(gambled);
+
+      if (gambled) {
+        // Show streak loss message
+        Alert.alert(
+          'Streak Broken',
+          'Recovery is always possible. Let\'s start fresh tomorrow.',
+          [{ text: 'Continue', onPress: () => setShowCheckInPrompt(false) }]
+        );
+      } else {
+        // Show encouragement
+        Alert.alert(
+          '💪 Great Job!',
+          'You made it another day. Your strength is building.',
+          [{ text: 'Continue', onPress: () => setShowCheckInPrompt(false) }]
+        );
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Failed to record check-in. Please try again.');
+    }
+  };
+
+  const nextMilestone = StreakCalculator.getNextMilestone(currentStreak);
+  const moneySaved = StreakCalculator.calculateMoneySaved(
+    currentStreak,
+    onboardingAnswers?.monthlySpend || 0
+  );
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Header */}
+        <View style={styles.headerContainer}>
+          <Text style={styles.greeting}>Your Journey</Text>
+          <TouchableOpacity
+            onPress={() => router.push('/(tabs)/settings')}
+            style={styles.settingsButton}
+          >
+            <Text style={styles.settingsIcon}>⚙️</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Main Streak Display */}
+        <StreakHeader days={currentStreak} lastCheckIn={lastCheckInDate} />
+
+        {/* Daily Check-In Card */}
+        {showCheckInPrompt ? (
+          <CheckInCard onCheckIn={handleCheckIn} />
+        ) : (
+          <Card variant="flat" padding={SPACING.lg}>
+            <Text style={styles.checkInStatus}>✓ Checked in today</Text>
+            <Button
+              label="Check in again"
+              variant="secondary"
+              size="sm"
+              fullWidth
+              onPress={() => setShowCheckInPrompt(true)}
+            />
+          </Card>
+        )}
+
+        {/* Stats Grid */}
+        <View style={styles.statsGrid}>
+          <StatBox
+            label="Longest Streak"
+            value={longestStreak}
+            icon="🏆"
+            color={COLORS.warning}
+          />
+          <StatBox
+            label="Money Saved"
+            value={`₹${moneySaved}`}
+            icon="💰"
+            color={COLORS.success}
+          />
+        </View>
+
+        {/* Next Milestone */}
+        {nextMilestone && (
+          <Card variant="elevated">
+            <Text style={styles.milestoneLabel}>Next Milestone</Text>
+            <View style={styles.milestoneContainer}>
+              <Text style={styles.milestoneBadge}>{nextMilestone.badge}</Text>
+              <View style={styles.milestoneInfo}>
+                <Text style={styles.milestoneTitle}>{nextMilestone.title}</Text>
+                <Text style={styles.milestoneProgress}>
+                  {nextMilestone.days - currentStreak} days to go
+                </Text>
+              </View>
+            </View>
+          </Card>
+        )}
+
+        {/* Quick Actions */}
+        <View style={styles.quickActionsContainer}>
+          <Text style={styles.sectionTitle}>Quick Actions</Text>
+
+          <TouchableOpacity
+            style={styles.actionCard}
+            onPress={() => router.push('/(tabs)/games')}
+            activeOpacity={0.7}
+          >
+            <Text style={styles.actionIcon}>🎮</Text>
+            <Text style={styles.actionTitle}>Play a Game</Text>
+            <Text style={styles.actionDesc}>Distract from urges</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.actionCard}
+            onPress={() => router.push('/(tabs)/friends')}
+            activeOpacity={0.7}
+          >
+            <Text style={styles.actionIcon}>👥</Text>
+            <Text style={styles.actionTitle}>Friends</Text>
+            <Text style={styles.actionDesc}>See who\'s winning</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.actionCard}
+            onPress={() => router.push('/(tabs)/achievements')}
+            activeOpacity={0.7}
+          >
+            <Text style={styles.actionIcon}>🏅</Text>
+            <Text style={styles.actionTitle}>Achievements</Text>
+            <Text style={styles.actionDesc}>View your wins</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Crisis Support */}
+        <Card variant="flat" padding={SPACING.lg}>
+          <Text style={styles.crisisTitle}>💬 Need Immediate Help?</Text>
+          <Text style={styles.crisisText}>
+            National Gambling Addiction Hotline: 0800 XXX XXXX
+          </Text>
+          <Button
+            label="View More Resources"
+            variant="ghost"
+            size="sm"
+            fullWidth
+            onPress={() => {
+              /* TODO: Navigate to resources screen */
+            }}
+          />
+        </Card>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
+  container: {
+    flex: 1,
+    backgroundColor: COLORS.background,
+  },
+  scrollContent: {
+    paddingHorizontal: SPACING.lg,
+    paddingVertical: SPACING.lg,
+  },
+  headerContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: SPACING.lg,
+  },
+  greeting: {
+    ...TYPOGRAPHY.h2,
+    color: COLORS.textPrimary,
+  },
+  settingsButton: {
+    padding: SPACING.md,
+  },
+  settingsIcon: {
+    fontSize: 28,
+  },
+  checkInStatus: {
+    ...TYPOGRAPHY.body,
+    color: COLORS.success,
+    textAlign: 'center',
+    fontWeight: '600',
+    marginBottom: SPACING.md,
+  },
+  statsGrid: {
+    flexDirection: 'row',
+    gap: SPACING.md,
+    marginVertical: SPACING.lg,
+  },
+  milestoneLabel: {
+    ...TYPOGRAPHY.label,
+    color: COLORS.textSecondary,
+    marginBottom: SPACING.md,
+  },
+  milestoneContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: SPACING.md,
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  milestoneBadge: {
+    fontSize: 40,
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  milestoneInfo: {
+    flex: 1,
+  },
+  milestoneTitle: {
+    ...TYPOGRAPHY.body,
+    color: COLORS.textPrimary,
+    fontWeight: '600',
+    marginBottom: SPACING.xs,
+  },
+  milestoneProgress: {
+    ...TYPOGRAPHY.bodySmall,
+    color: COLORS.textSecondary,
+  },
+  quickActionsContainer: {
+    marginVertical: SPACING.xl,
+  },
+  sectionTitle: {
+    ...TYPOGRAPHY.h3,
+    color: COLORS.textPrimary,
+    marginBottom: SPACING.lg,
+  },
+  actionCard: {
+    backgroundColor: COLORS.surfaceLight,
+    borderRadius: 12,
+    padding: SPACING.lg,
+    marginBottom: SPACING.md,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  actionIcon: {
+    fontSize: 32,
+    marginRight: SPACING.lg,
+  },
+  actionTitle: {
+    ...TYPOGRAPHY.body,
+    color: COLORS.textPrimary,
+    fontWeight: '600',
+    flex: 1,
+  },
+  actionDesc: {
+    ...TYPOGRAPHY.caption,
+    color: COLORS.textSecondary,
+  },
+  crisisTitle: {
+    ...TYPOGRAPHY.body,
+    color: COLORS.textPrimary,
+    fontWeight: '600',
+    marginBottom: SPACING.sm,
+  },
+  crisisText: {
+    ...TYPOGRAPHY.bodySmall,
+    color: COLORS.textSecondary,
+    marginBottom: SPACING.md,
   },
 });
+
