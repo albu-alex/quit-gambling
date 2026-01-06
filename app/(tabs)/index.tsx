@@ -1,13 +1,14 @@
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
-    Alert,
-    SafeAreaView,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  Alert,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  useColorScheme,
 } from 'react-native';
 import { Button } from '../../src/components/atoms/Button';
 import { Card } from '../../src/components/atoms/Card';
@@ -22,6 +23,8 @@ export default function HomeScreen() {
   const router = useRouter();
   const userStore = useUserStore();
   const [showCheckInPrompt, setShowCheckInPrompt] = useState(false);
+  const colorScheme = useColorScheme();
+  const colors = COLORS[colorScheme === 'dark' ? 'dark' : 'light'];
 
   const {
     currentStreak,
@@ -68,6 +71,7 @@ export default function HomeScreen() {
     currentStreak,
     onboardingAnswers?.monthlySpend || 0
   );
+  const styles = getStyles(colors);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -111,13 +115,13 @@ export default function HomeScreen() {
             label="Longest Streak"
             value={longestStreak}
             icon="🏆"
-            color={COLORS.warning}
+            color={colors.warning}
           />
           <StatBox
             label="Money Saved"
-            value={`₹${moneySaved}`}
+            value={`RON ${moneySaved}`}
             icon="💰"
-            color={COLORS.success}
+            color={colors.success}
           />
         </View>
 
@@ -158,7 +162,7 @@ export default function HomeScreen() {
           >
             <Text style={styles.actionIcon}>👥</Text>
             <Text style={styles.actionTitle}>Friends</Text>
-            <Text style={styles.actionDesc}>See who\'s winning</Text>
+            <Text style={styles.actionDesc}>See who's winning</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -193,10 +197,10 @@ export default function HomeScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (colors: typeof COLORS.light) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.background,
+    backgroundColor: colors.background,
   },
   scrollContent: {
     paddingHorizontal: SPACING.lg,
@@ -210,7 +214,7 @@ const styles = StyleSheet.create({
   },
   greeting: {
     ...TYPOGRAPHY.h2,
-    color: COLORS.textPrimary,
+    color: colors.textPrimary,
   },
   settingsButton: {
     padding: SPACING.md,
@@ -220,7 +224,7 @@ const styles = StyleSheet.create({
   },
   checkInStatus: {
     ...TYPOGRAPHY.body,
-    color: COLORS.success,
+    color: colors.success,
     textAlign: 'center',
     fontWeight: '600',
     marginBottom: SPACING.md,
@@ -232,7 +236,7 @@ const styles = StyleSheet.create({
   },
   milestoneLabel: {
     ...TYPOGRAPHY.label,
-    color: COLORS.textSecondary,
+    color: colors.textSecondary,
     marginBottom: SPACING.md,
   },
   milestoneContainer: {
@@ -248,24 +252,24 @@ const styles = StyleSheet.create({
   },
   milestoneTitle: {
     ...TYPOGRAPHY.body,
-    color: COLORS.textPrimary,
+    color: colors.textPrimary,
     fontWeight: '600',
     marginBottom: SPACING.xs,
   },
   milestoneProgress: {
     ...TYPOGRAPHY.bodySmall,
-    color: COLORS.textSecondary,
+    color: colors.textSecondary,
   },
   quickActionsContainer: {
     marginVertical: SPACING.xl,
   },
   sectionTitle: {
     ...TYPOGRAPHY.h3,
-    color: COLORS.textPrimary,
+    color: colors.textPrimary,
     marginBottom: SPACING.lg,
   },
   actionCard: {
-    backgroundColor: COLORS.surfaceLight,
+    backgroundColor: colors.surfaceLight,
     borderRadius: 12,
     padding: SPACING.lg,
     marginBottom: SPACING.md,
@@ -278,24 +282,23 @@ const styles = StyleSheet.create({
   },
   actionTitle: {
     ...TYPOGRAPHY.body,
-    color: COLORS.textPrimary,
+    color: colors.textPrimary,
     fontWeight: '600',
     flex: 1,
   },
   actionDesc: {
     ...TYPOGRAPHY.caption,
-    color: COLORS.textSecondary,
+    color: colors.textSecondary,
   },
   crisisTitle: {
     ...TYPOGRAPHY.body,
-    color: COLORS.textPrimary,
+    color: colors.textPrimary,
     fontWeight: '600',
     marginBottom: SPACING.sm,
   },
   crisisText: {
     ...TYPOGRAPHY.bodySmall,
-    color: COLORS.textSecondary,
+    color: colors.textSecondary,
     marginBottom: SPACING.md,
   },
 });
-

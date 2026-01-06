@@ -9,7 +9,6 @@ import {
   LayoutChangeEvent,
   LayoutRectangle,
   PanResponder,
-  SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
@@ -17,6 +16,7 @@ import {
   View,
   useColorScheme,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button } from '../../src/components/atoms/Button';
 import { COLORS, SPACING, STRINGS, TYPOGRAPHY } from '../../src/constants/config';
 import { OnboardingAnswers } from '../../src/types';
@@ -93,16 +93,16 @@ export default function QuestionnaireScreen() {
     }
   };
 
-  const isCurrentSlideValid = () => {
+  const isCurrentSlideValid = (): boolean => {
     switch (slide) {
       case 0:
-        return answers.yearsGambling !== undefined && answers.yearsGambling >= 0;
+        return true;
       case 1:
-        return answers.frequencyPerWeek !== undefined && answers.frequencyPerWeek >= 0;
+        return true;
       case 2:
         return answers.monthlySpend !== undefined && answers.monthlySpend >= 0;
       case 3:
-        return answers.motivation && answers.motivation.trim().length > 0;
+        return !!(answers.motivation && answers.motivation.trim().length > 0);
       default:
         return false;
     }
@@ -120,19 +120,30 @@ export default function QuestionnaireScreen() {
               <Text style={[styles.sliderValue as any, { color: colors.primary }]}>
                 {Math.round(answers.yearsGambling || 0)} years
               </Text>
-              <View 
-                style={[styles.sliderTrack, { backgroundColor: colors.border }]}
-                onLayout={(e) => {
-                  sliderWidth.current = e.nativeEvent.layout;
-                }}
-                {...yearsPanResponder.panHandlers}
-              >
+              <View style={styles.sliderWrapper}>
+                <View 
+                  style={[styles.sliderTrack, { backgroundColor: colors.textSecondary + '30' }]}
+                  onLayout={(e) => {
+                    sliderWidth.current = e.nativeEvent.layout;
+                  }}
+                  {...yearsPanResponder.panHandlers}
+                >
+                  <View
+                    style={[
+                      styles.sliderFill,
+                      {
+                        backgroundColor: colors.primary,
+                        width: `${((answers.yearsGambling || 0) / 50) * 100}%` as any,
+                      },
+                    ]}
+                  />
+                </View>
                 <View
                   style={[
-                    styles.sliderFill,
+                    styles.sliderThumb,
                     {
+                      left: `${((answers.yearsGambling || 0) / 50) * 100}%` as any,
                       backgroundColor: colors.primary,
-                      width: `${((answers.yearsGambling || 0) / 50) * 100}%` as any,
                     },
                   ]}
                 />
@@ -151,19 +162,30 @@ export default function QuestionnaireScreen() {
               <Text style={[styles.sliderValue as any, { color: colors.secondary }]}>
                 {Math.round(answers.frequencyPerWeek || 0)} times/week
               </Text>
-              <View 
-                style={[styles.sliderTrack, { backgroundColor: colors.border }]}
-                onLayout={(e) => {
-                  sliderWidth.current = e.nativeEvent.layout;
-                }}
-                {...frequencyPanResponder.panHandlers}
-              >
+              <View style={styles.sliderWrapper}>
+                <View 
+                  style={[styles.sliderTrack, { backgroundColor: colors.textSecondary + '30' }]}
+                  onLayout={(e) => {
+                    sliderWidth.current = e.nativeEvent.layout;
+                  }}
+                  {...frequencyPanResponder.panHandlers}
+                >
+                  <View
+                    style={[
+                      styles.sliderFill,
+                      {
+                        backgroundColor: colors.secondary,
+                        width: `${((answers.frequencyPerWeek || 0) / 7) * 100}%` as any,
+                      },
+                    ]}
+                  />
+                </View>
                 <View
                   style={[
-                    styles.sliderFill,
+                    styles.sliderThumb,
                     {
+                      left: `${((answers.frequencyPerWeek || 0) / 7) * 100}%` as any,
                       backgroundColor: colors.secondary,
-                      width: `${((answers.frequencyPerWeek || 0) / 7) * 100}%` as any,
                     },
                   ]}
                 />
@@ -309,16 +331,26 @@ const styles = StyleSheet.create({
   sliderContainer: {
     marginVertical: SPACING.lg,
   },
+  sliderWrapper: {
+    position: 'relative',
+    paddingVertical: SPACING.lg,
+  },
   sliderTrack: {
     height: 8,
     borderRadius: 4,
-    marginVertical: SPACING.lg,
     overflow: 'hidden',
-    paddingVertical: SPACING.md,
   },
   sliderFill: {
     height: '100%',
     borderRadius: 4,
+  },
+  sliderThumb: {
+    position: 'absolute',
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    top: -6,
+    marginLeft: -12,
   },
   sliderValue: {
     ...TYPOGRAPHY.body,
@@ -337,7 +369,7 @@ const styles = StyleSheet.create({
     paddingTop: SPACING.md,
   },
   buttonContainer: {
-    flexDirection: 'row',
+    flexDirection: 'column',
     paddingHorizontal: SPACING.lg,
     paddingBottom: SPACING.lg,
     gap: SPACING.md,

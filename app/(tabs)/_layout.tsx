@@ -1,21 +1,25 @@
 import { Tabs } from 'expo-router';
 import React from 'react';
+import { useColorScheme } from 'react-native';
 
 import { HapticTab } from '@/components/haptic-tab';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { COLORS } from '@/src/constants/config';
 
 export default function TabLayout() {
+  const colorScheme = useColorScheme();
+  const colors = COLORS[colorScheme === 'dark' ? 'dark' : 'light'];
+
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: COLORS.primary,
-        tabBarInactiveTintColor: COLORS.textTertiary,
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: colors.textTertiary,
         headerShown: false,
         tabBarButton: HapticTab,
         tabBarStyle: {
-          backgroundColor: COLORS.background,
-          borderTopColor: COLORS.border,
+          backgroundColor: colors.background,
+          borderTopColor: colors.border,
         },
       }}>
       <Tabs.Screen
@@ -23,13 +27,6 @@ export default function TabLayout() {
         options={{
           title: 'Home',
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="games"
-        options={{
-          title: 'Games',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="gamecontroller.fill" color={color} />,
         }}
       />
       <Tabs.Screen

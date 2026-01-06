@@ -60,6 +60,10 @@ export default function GamesScreen() {
     // Navigate to the game screen
     if (gameId === 'memory') {
       router.push('/(tabs)/games/memory');
+    } else if (gameId === 'colorMatch') {
+      router.push('/(tabs)/games/color-match');
+    } else if (gameId === 'wordChain') {
+      router.push('/(tabs)/games/word-chain');
     }
   };
 
@@ -102,7 +106,6 @@ export default function GamesScreen() {
           keyExtractor={(item) => item.id}
           scrollEnabled={false}
           numColumns={1}
-          columnWrapperStyle={styles.column}
           contentContainerStyle={styles.gridContainer}
         />
 
@@ -165,13 +168,11 @@ const styles = StyleSheet.create({
   gridContainer: {
     marginVertical: SPACING.lg,
   },
-  column: {
-    marginBottom: SPACING.lg,
-  },
   gameCard: {
     borderRadius: 12,
     padding: SPACING.lg,
     borderLeftWidth: 4,
+    marginBottom: SPACING.lg,
   },
   gameIcon: {
     fontSize: 40,
