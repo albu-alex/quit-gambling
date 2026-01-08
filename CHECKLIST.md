@@ -28,12 +28,12 @@
 - [x] **app/(onboarding)/index.tsx** - Welcome screen (100 lines)
 - [x] **app/(onboarding)/questionnaire.tsx** - 4-slide form (250 lines)
 - [x] **app/(onboarding)/trial-offer.tsx** - Trial screen (200 lines)
-- [x] **app/(tabs)/index.tsx** - Dashboard (250 lines)
-- [x] **app/(tabs)/games/index.tsx** - Games hub (150 lines)
-- [x] **app/(tabs)/games/memory.tsx** - Memory game (300 lines)
-- [x] **app/(tabs)/friends.tsx** - Friends list (120 lines)
-- [x] **app/(tabs)/achievements.tsx** - Achievements (140 lines)
-- [x] **app/(tabs)/settings.tsx** - Settings (200 lines)
+- [x] **app/(main)/index.tsx** - Dashboard (250 lines)
+- [x] **app/(main)/games/index.tsx** - Games hub (150 lines)
+- [x] **app/(main)/games/memory.tsx** - Memory game (300 lines)
+- [x] **app/(main)/friends.tsx** - Friends list (120 lines)
+- [x] **app/(main)/achievements.tsx** - Achievements (140 lines)
+- [x] **app/(main)/settings.tsx** - Settings (200 lines)
 
 ### Business Logic
 - [x] **domain/streak/StreakCalculator.ts** - Milestone logic (120 lines)
@@ -45,7 +45,7 @@
 
 ### Navigation
 - [x] **app/_layout.tsx** - Root with conditional routing (30 lines)
-- [x] **app/(tabs)/_layout.tsx** - Tab navigator (50 lines)
+- [x] **app/(main)/_layout.tsx** - Tab navigator (50 lines)
 - [x] **app/(onboarding)/_layout.tsx** - Onboarding stack (30 lines)
 
 ## 📦 Dependencies Installed ✅
@@ -270,8 +270,8 @@ src/
 app/
 ├── _layout.tsx (30 lines)
 ├── (onboarding)/ (3 files, 550 lines)
-├── (tabs)/ (7 files, 1,300 lines)
-└── (tabs)/games/ (2 files, 450 lines)
+├── (main)/ (7 files, 1,300 lines)
+└── (main)/games/ (2 files, 450 lines)
 ```
 
 ## ✅ Everything Verified ✅

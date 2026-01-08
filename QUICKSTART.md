@@ -50,9 +50,9 @@ Then:
 
 ### Screens
 - **`app/_layout.tsx`** - Conditional onboarding routing
-- **`app/(tabs)/index.tsx`** - Dashboard/home screen
+- **`app/(main)/index.tsx`** - Dashboard/home screen
 - **`app/(onboarding)/*.tsx`** - Welcome, questionnaire, trial
-- **`app/(tabs)/games/memory.tsx`** - Example mini-game
+- **`app/(main)/games/memory.tsx`** - Example mini-game
 
 ### Components
 - **`src/components/atoms/Button.tsx`** - Reusable button

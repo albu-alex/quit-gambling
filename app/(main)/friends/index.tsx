@@ -4,37 +4,43 @@
 
 import { useRouter } from 'expo-router';
 import React from 'react';
-import { SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { Button } from '../../src/components/atoms/Button';
-import { Card } from '../../src/components/atoms/Card';
-import { COLORS, SPACING, TYPOGRAPHY } from '../../src/constants/config';
-import { useSocialStore } from '../../src/stores/socialStore';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View, useColorScheme } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Button } from '../../../src/components/atoms/Button';
+import { Card } from '../../../src/components/atoms/Card';
+import { COLORS, SPACING, TYPOGRAPHY } from '../../../src/constants/config';
+import { useSocialStore } from '../../../src/stores/socialStore';
 
 export default function FriendsScreen() {
   const router = useRouter();
+  const colorScheme = useColorScheme();
+  const colors = COLORS[colorScheme === 'dark' ? 'dark' : 'light'];
   const { friends, getFriendsLeaderboard } = useSocialStore();
   const friendsLeaderboard = getFriendsLeaderboard();
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.header}>
-          <Text style={styles.title}>Friends</Text>
+          <TouchableOpacity onPress={() => router.back()}>
+            <Text style={[styles.backButton, { color: colors.primary }]}>← Back</Text>
+          </TouchableOpacity>
+          <Text style={[styles.title, { color: colors.textPrimary }]}>Friends</Text>
           <TouchableOpacity
-            onPress={() => router.push('/(tabs)/friends/add')}
-            style={styles.addButton}
+            onPress={() => router.push('/(main)/friends/add')}
+            style={[styles.addButton, { backgroundColor: colors.primary }]}
           >
-            <Text style={styles.addButtonText}>+ Add</Text>
+            <Text style={[styles.addButtonText, { color: colors.background }]}>+ Add</Text>
           </TouchableOpacity>
         </View>
 
         {friends.length === 0 ? (
           <Card variant="flat" padding={SPACING.lg}>
-            <Text style={styles.emptyTitle}>No Friends Yet</Text>
-            <Text style={styles.emptyText}>
+            <Text style={[styles.emptyTitle, { color: colors.textPrimary }]}>No Friends Yet</Text>
+            <Text style={[styles.emptyText, { color: colors.textSecondary }]}>
               Invite friends to join you on your journey to stay gambling-free.
               Accountability helps!
             </Text>
@@ -43,21 +49,21 @@ export default function FriendsScreen() {
               variant="primary"
               size="md"
               fullWidth
-              onPress={() => router.push('/(tabs)/friends/add')}
+              onPress={() => router.push('/(main)/friends/add')}
             />
           </Card>
         ) : (
           <>
-            <Text style={styles.sectionTitle}>Your Friends' Progress</Text>
+            <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>Your Friends' Progress</Text>
             {friendsLeaderboard.map((entry, index) => (
               <Card key={entry.userId} variant="elevated" padding={SPACING.lg}>
                 <View style={styles.leaderboardRow}>
-                  <View style={styles.rankBadge}>
-                    <Text style={styles.rankText}>#{entry.rank}</Text>
+                  <View style={[styles.rankBadge, { backgroundColor: colors.primary }]}>
+                    <Text style={[styles.rankText, { color: colors.background }]}>#{entry.rank}</Text>
                   </View>
                   <View style={styles.friendInfo}>
-                    <Text style={styles.friendName}>{entry.displayName}</Text>
-                    <Text style={styles.friendStreak}>
+                    <Text style={[styles.friendName, { color: colors.textPrimary }]}>{entry.displayName}</Text>
+                    <Text style={[styles.friendStreak, { color: colors.textSecondary }]}>
                       {entry.currentStreak} days 🔥
                     </Text>
                   </View>
@@ -77,7 +83,6 @@ export default function FriendsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.background,
   },
   scrollContent: {
     paddingHorizontal: SPACING.lg,
@@ -89,35 +94,33 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: SPACING.xl,
   },
+  backButton: {
+    ...TYPOGRAPHY.body,
+    fontWeight: '600',
+  },
   title: {
     ...TYPOGRAPHY.h2,
-    color: COLORS.textPrimary,
   },
   addButton: {
-    backgroundColor: COLORS.primary,
     paddingHorizontal: SPACING.lg,
     paddingVertical: SPACING.sm,
     borderRadius: 8,
   },
   addButtonText: {
     ...TYPOGRAPHY.body,
-    color: COLORS.background,
     fontWeight: '600',
   },
   sectionTitle: {
     ...TYPOGRAPHY.h3,
-    color: COLORS.textPrimary,
     marginBottom: SPACING.lg,
   },
   emptyTitle: {
     ...TYPOGRAPHY.h3,
-    color: COLORS.textPrimary,
     marginBottom: SPACING.md,
     textAlign: 'center',
   },
   emptyText: {
     ...TYPOGRAPHY.body,
-    color: COLORS.textSecondary,
     textAlign: 'center',
     marginBottom: SPACING.lg,
     lineHeight: 22,
@@ -131,13 +134,11 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: COLORS.primary,
     justifyContent: 'center',
     alignItems: 'center',
   },
   rankText: {
     ...TYPOGRAPHY.label,
-    color: COLORS.background,
     fontWeight: '700',
   },
   friendInfo: {
@@ -145,13 +146,11 @@ const styles = StyleSheet.create({
   },
   friendName: {
     ...TYPOGRAPHY.body,
-    color: COLORS.textPrimary,
     fontWeight: '600',
     marginBottom: SPACING.xs,
   },
   friendStreak: {
     ...TYPOGRAPHY.bodySmall,
-    color: COLORS.textSecondary,
   },
   trophy: {
     fontSize: 24,

@@ -5,14 +5,14 @@
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {
-  FlatList,
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-  useColorScheme,
+    FlatList,
+    SafeAreaView,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
+    useColorScheme,
 } from 'react-native';
 import { Card } from '../../../src/components/atoms/Card';
 import { COLORS, SPACING, TYPOGRAPHY } from '../../../src/constants/config';
@@ -59,11 +59,11 @@ export default function GamesScreen() {
     setSelectedGame(gameId);
     // Navigate to the game screen
     if (gameId === 'memory') {
-      router.push('/(tabs)/games/memory');
+      router.push('/(main)/games/memory');
     } else if (gameId === 'colorMatch') {
-      router.push('/(tabs)/games/color-match');
+      router.push('/(main)/games/color-match');
     } else if (gameId === 'wordChain') {
-      router.push('/(tabs)/games/word-chain');
+      router.push('/(main)/games/word-chain');
     }
   };
 

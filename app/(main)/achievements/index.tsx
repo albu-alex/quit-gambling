@@ -2,38 +2,43 @@
  * Achievements Screen
  */
 
+import { useRouter } from 'expo-router';
 import React from 'react';
-import { SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { Button } from '../../src/components/atoms/Button';
-import { Card } from '../../src/components/atoms/Card';
-import { COLORS, SPACING, TYPOGRAPHY } from '../../src/constants/config';
-import { StreakCalculator } from '../../src/domain/streak/StreakCalculator';
-import { useUserStore } from '../../src/stores/userStore';
+import { ScrollView, StyleSheet, Text, View, useColorScheme } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Button } from '../../../src/components/atoms/Button';
+import { Card } from '../../../src/components/atoms/Card';
+import { COLORS, SPACING, TYPOGRAPHY } from '../../../src/constants/config';
+import { StreakCalculator } from '../../../src/domain/streak/StreakCalculator';
+import { useUserStore } from '../../../src/stores/userStore';
 
 export default function AchievementsScreen() {
+  const router = useRouter();
+  const colorScheme = useColorScheme();
+  const colors = COLORS[colorScheme === 'dark' ? 'dark' : 'light'];
   const currentStreak = useUserStore((state) => state.currentStreak);
   const unlockedMilestones = StreakCalculator.getUnlockedMilestones(currentStreak);
   const allMilestones = StreakCalculator.MILESTONES;
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        <Text style={styles.title}>Achievements</Text>
+        <Text style={[styles.title, { color: colors.textPrimary }]}>Achievements</Text>
 
         {/* Unlocked Achievements */}
         {unlockedMilestones.length > 0 && (
           <>
-            <Text style={styles.sectionTitle}>🏆 Unlocked</Text>
+            <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>🏆 Unlocked</Text>
             {unlockedMilestones.map((milestone) => (
               <Card key={milestone.days} variant="elevated" padding={SPACING.lg}>
                 <View style={styles.achievementRow}>
                   <Text style={styles.achievementBadge}>{milestone.badge}</Text>
                   <View style={styles.achievementContent}>
-                    <Text style={styles.achievementTitle}>{milestone.title}</Text>
-                    <Text style={styles.achievementDays}>
+                    <Text style={[styles.achievementTitle, { color: colors.textPrimary }]}>{milestone.title}</Text>
+                    <Text style={[styles.achievementDays, { color: colors.textSecondary }]}>
                       Achieved at {milestone.days} days
                     </Text>
                   </View>
@@ -44,7 +49,7 @@ export default function AchievementsScreen() {
         )}
 
         {/* Locked Achievements */}
-        <Text style={styles.sectionTitle}>🔒 Locked</Text>
+        <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>🔒 Locked</Text>
         {allMilestones
           .filter((m) => m.days > currentStreak)
           .map((milestone) => (
@@ -52,8 +57,8 @@ export default function AchievementsScreen() {
               <View style={styles.achievementRow}>
                 <Text style={styles.achievementBadgeGray}>❌</Text>
                 <View style={styles.achievementContent}>
-                  <Text style={styles.achievementTitleGray}>{milestone.title}</Text>
-                  <Text style={styles.achievementProgress}>
+                  <Text style={[styles.achievementTitleGray, { color: colors.textSecondary }]}>{milestone.title}</Text>
+                  <Text style={[styles.achievementProgress, { color: colors.textTertiary }]}>
                     {milestone.days - currentStreak} days to go
                   </Text>
                 </View>
@@ -63,8 +68,8 @@ export default function AchievementsScreen() {
 
         {/* Share Section */}
         <Card variant="elevated" padding={SPACING.lg}>
-          <Text style={styles.shareTitle}>📸 Share Your Win</Text>
-          <Text style={styles.shareText}>
+          <Text style={[styles.shareTitle, { color: colors.textPrimary }]}>📸 Share Your Win</Text>
+          <Text style={[styles.shareText, { color: colors.textSecondary }]}>
             Share your achievements with friends and on social media
           </Text>
           <Button
@@ -72,9 +77,7 @@ export default function AchievementsScreen() {
             variant="primary"
             size="md"
             fullWidth
-            onPress={() => {
-              /* TODO: Navigate to share screen */
-            }}
+            onPress={() => router.push('/(main)/achievements/share')}
           />
         </Card>
       </ScrollView>
@@ -85,7 +88,6 @@ export default function AchievementsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.background,
   },
   scrollContent: {
     paddingHorizontal: SPACING.lg,
@@ -93,12 +95,10 @@ const styles = StyleSheet.create({
   },
   title: {
     ...TYPOGRAPHY.h2,
-    color: COLORS.textPrimary,
     marginBottom: SPACING.xl,
   },
   sectionTitle: {
     ...TYPOGRAPHY.h3,
-    color: COLORS.textPrimary,
     marginBottom: SPACING.lg,
     marginTop: SPACING.lg,
   },
@@ -119,34 +119,28 @@ const styles = StyleSheet.create({
   },
   achievementTitle: {
     ...TYPOGRAPHY.body,
-    color: COLORS.textPrimary,
     fontWeight: '600',
     marginBottom: SPACING.xs,
   },
   achievementTitleGray: {
     ...TYPOGRAPHY.body,
-    color: COLORS.textSecondary,
     fontWeight: '600',
     marginBottom: SPACING.xs,
   },
   achievementDays: {
     ...TYPOGRAPHY.bodySmall,
-    color: COLORS.textSecondary,
   },
   achievementProgress: {
     ...TYPOGRAPHY.bodySmall,
-    color: COLORS.textTertiary,
     fontStyle: 'italic',
   },
   shareTitle: {
     ...TYPOGRAPHY.body,
-    color: COLORS.textPrimary,
     fontWeight: '600',
     marginBottom: SPACING.md,
   },
   shareText: {
     ...TYPOGRAPHY.bodySmall,
-    color: COLORS.textSecondary,
     marginBottom: SPACING.lg,
   },
 });

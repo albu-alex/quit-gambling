@@ -16,6 +16,8 @@ interface UserState extends UserProfile, StreakData {
   isOnboarded: boolean;
   createdAt: string;
   onboardingAnswers?: OnboardingAnswers;
+  _hasHydrated: boolean;
+  setHasHydrated: (state: boolean) => void;
 
   // Streak
   currentStreak: number;
@@ -40,6 +42,8 @@ export const useUserStore = create<UserState>()(
       isOnboarded: false,
       createdAt: new Date().toISOString(),
       onboardingAnswers: undefined,
+      _hasHydrated: false,
+      setHasHydrated: (state: boolean) => set({ _hasHydrated: state }),
 
       currentStreak: 0,
       longestStreak: 0,
@@ -173,6 +177,11 @@ export const useUserStore = create<UserState>()(
         checkInHistory: state.checkInHistory,
         totalAbstinenceDays: state.totalAbstinenceDays,
       }),
+      onRehydrateStorage: () => (state) => {
+        if (state) {
+          state.setHasHydrated(true);
+        }
+      },
     }
   )
 );

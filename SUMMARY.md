@@ -143,7 +143,7 @@ app/
 │   ├── index.tsx             (100 lines)
 │   ├── questionnaire.tsx     (250 lines)
 │   └── trial-offer.tsx       (200 lines)
-└── (tabs)/
+└── (main)/
     ├── _layout.tsx
     ├── index.tsx             (250 lines)
     ├── games/

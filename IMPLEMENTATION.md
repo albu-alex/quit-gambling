@@ -109,7 +109,7 @@ The app uses conditional routing in `app/_layout.tsx` - users cannot access the 
 - `StreakHeader.tsx` - Main streak display with flame and motivational message
 - `CheckInCard.tsx` - Daily check-in card with yes/no buttons
 
-**Screens** (`app/(tabs)/` and `app/(onboarding)/`):
+**Screens** (`app/(main)/` and `app/(onboarding)/`):
 - HomeScreen (index.tsx)
 - GamesScreen (games/index.tsx)
 - MemoryGameScreen (games/memory.tsx)
@@ -220,7 +220,7 @@ The app uses conditional routing in `app/_layout.tsx` - users cannot access the 
 /Users/bianca/Projects/quit-gambling/
 ├── app/
 │   ├── _layout.tsx                 # Root with conditional routing
-│   ├── (tabs)/
+│   ├── (main)/
 │   │   ├── _layout.tsx             # Tab navigator config
 │   │   ├── index.tsx               # Dashboard
 │   │   ├── games/

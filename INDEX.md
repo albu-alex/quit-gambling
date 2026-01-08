@@ -57,7 +57,7 @@
 │   │   ├── questionnaire.tsx   # 4-slide form
 │   │   └── trial-offer.tsx     # 7-day trial offer
 │   │
-│   └── (tabs)/                 # Main app tabs
+│   └── (main)/                 # Main app tabs
 │       ├── _layout.tsx         # Tab navigation config
 │       ├── index.tsx           # Home/Dashboard
 │       ├── games/

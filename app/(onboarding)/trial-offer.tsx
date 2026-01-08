@@ -4,7 +4,8 @@
 
 import { useRouter } from 'expo-router';
 import React from 'react';
-import { SafeAreaView, ScrollView, StyleSheet, Text, View, useColorScheme } from 'react-native';
+import { ScrollView, StyleSheet, Text, View, useColorScheme } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button } from '../../src/components/atoms/Button';
 import { Card } from '../../src/components/atoms/Card';
 import { COLORS, SPACING, STRINGS, TYPOGRAPHY } from '../../src/constants/config';
@@ -27,11 +28,11 @@ export default function TrialOfferScreen() {
     });
 
     // Navigate to main app
-    router.replace('/(tabs)');
+    router.push('/(main)');
   };
 
   const handleSkip = () => {
-    router.replace('/(tabs)');
+    router.push('/(main)');
   };
 
   return (

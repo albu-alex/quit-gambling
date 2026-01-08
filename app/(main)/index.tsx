@@ -35,7 +35,6 @@ export default function HomeScreen() {
     shouldPromptCheckIn,
   } = userStore;
 
-  // Check if should show check-in prompt on mount
   useEffect(() => {
     if (shouldPromptCheckIn()) {
       setShowCheckInPrompt(true);
@@ -47,14 +46,12 @@ export default function HomeScreen() {
       await recordCheckIn(gambled);
 
       if (gambled) {
-        // Show streak loss message
         Alert.alert(
           'Streak Broken',
           'Recovery is always possible. Let\'s start fresh tomorrow.',
           [{ text: 'Continue', onPress: () => setShowCheckInPrompt(false) }]
         );
       } else {
-        // Show encouragement
         Alert.alert(
           '💪 Great Job!',
           'You made it another day. Your strength is building.',
@@ -83,7 +80,7 @@ export default function HomeScreen() {
         <View style={styles.headerContainer}>
           <Text style={styles.greeting}>Your Journey</Text>
           <TouchableOpacity
-            onPress={() => router.push('/(tabs)/settings')}
+            onPress={() => router.push('/(main)/settings')}
             style={styles.settingsButton}
           >
             <Text style={styles.settingsIcon}>⚙️</Text>
@@ -147,7 +144,7 @@ export default function HomeScreen() {
 
           <TouchableOpacity
             style={styles.actionCard}
-            onPress={() => router.push('/(tabs)/games')}
+            onPress={() => router.push('/(main)/games')}
             activeOpacity={0.7}
           >
             <Text style={styles.actionIcon}>🎮</Text>
@@ -157,7 +154,7 @@ export default function HomeScreen() {
 
           <TouchableOpacity
             style={styles.actionCard}
-            onPress={() => router.push('/(tabs)/friends')}
+            onPress={() => router.push('/(main)/friends')}
             activeOpacity={0.7}
           >
             <Text style={styles.actionIcon}>👥</Text>
@@ -167,7 +164,7 @@ export default function HomeScreen() {
 
           <TouchableOpacity
             style={styles.actionCard}
-            onPress={() => router.push('/(tabs)/achievements')}
+            onPress={() => router.push('/(main)/achievements')}
             activeOpacity={0.7}
           >
             <Text style={styles.actionIcon}>🏅</Text>

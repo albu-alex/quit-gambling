@@ -5,15 +5,16 @@
 import { useRouter } from 'expo-router';
 import React from 'react';
 import {
-    Alert,
-    SafeAreaView,
-    ScrollView,
-    StyleSheet,
-    Switch,
-    Text,
-    TouchableOpacity,
-    View,
+  Alert,
+  ScrollView,
+  StyleSheet,
+  Switch,
+  Text,
+  TouchableOpacity,
+  View,
+  useColorScheme,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button } from '../../src/components/atoms/Button';
 import { Card } from '../../src/components/atoms/Card';
 import { COLORS, SPACING, TYPOGRAPHY } from '../../src/constants/config';
@@ -23,6 +24,8 @@ import { useUserStore } from '../../src/stores/userStore';
 
 export default function SettingsScreen() {
   const router = useRouter();
+  const colorScheme = useColorScheme();
+  const colors = COLORS[colorScheme === 'dark' ? 'dark' : 'light'];
   const userId = useUserStore((state) => state.userId);
   const [notificationsEnabled, toggleNotifications] = [
     useNotificationStore((state) => state.notificationsEnabled),
@@ -72,83 +75,83 @@ export default function SettingsScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        <Text style={styles.title}>Settings</Text>
+        <Text style={[styles.title, { color: colors.textPrimary }]}>Settings</Text>
 
         {/* Account Section */}
-        <Text style={styles.sectionTitle}>Account</Text>
+        <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>Account</Text>
         <Card variant="flat" padding={SPACING.lg}>
           <View style={styles.settingRow}>
             <View>
-              <Text style={styles.settingLabel}>User ID</Text>
-              <Text style={styles.settingValue}>{userId.substring(0, 8)}...</Text>
+              <Text style={[styles.settingLabel, { color: colors.textPrimary }]}>User ID</Text>
+              <Text style={[styles.settingValue, { color: colors.textSecondary }]}>{userId.substring(0, 8)}...</Text>
             </View>
           </View>
         </Card>
 
         {/* Notifications Section */}
-        <Text style={styles.sectionTitle}>Notifications</Text>
+        <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>Notifications</Text>
         <Card variant="flat" padding={SPACING.lg}>
           <View style={styles.settingRow}>
             <View>
-              <Text style={styles.settingLabel}>Daily Check-in Reminders</Text>
-              <Text style={styles.settingValue}>9:00 AM</Text>
+              <Text style={[styles.settingLabel, { color: colors.textPrimary }]}>Daily Check-in Reminders</Text>
+              <Text style={[styles.settingValue, { color: colors.textSecondary }]}>9:00 AM</Text>
             </View>
             <Switch
               value={notificationsEnabled}
               onValueChange={toggleNotifications}
-              trackColor={{ false: COLORS.border, true: COLORS.success }}
-              thumbColor={notificationsEnabled ? COLORS.success : COLORS.textTertiary}
+              trackColor={{ false: colors.border, true: colors.success }}
+              thumbColor={notificationsEnabled ? colors.success : colors.textTertiary}
             />
           </View>
         </Card>
 
         {/* Privacy Section */}
-        <Text style={styles.sectionTitle}>Privacy & Security</Text>
+        <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>Privacy & Security</Text>
         <Card variant="flat" padding={SPACING.lg}>
           <TouchableOpacity style={styles.settingRow}>
             <View>
-              <Text style={styles.settingLabel}>Data Encryption</Text>
-              <Text style={styles.settingValue}>Enabled (AES-256)</Text>
+              <Text style={[styles.settingLabel, { color: colors.textPrimary }]}>Data Encryption</Text>
+              <Text style={[styles.settingValue, { color: colors.textSecondary }]}>Enabled (AES-256)</Text>
             </View>
             <Text style={styles.settingIcon}>🔒</Text>
           </TouchableOpacity>
         </Card>
 
         {/* About Section */}
-        <Text style={styles.sectionTitle}>About</Text>
+        <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>About</Text>
         <Card variant="flat" padding={SPACING.lg}>
-          <View style={styles.aboutRow}>
-            <Text style={styles.aboutLabel}>Quit Gambling App</Text>
-            <Text style={styles.aboutValue}>v1.0.0</Text>
+          <View style={[styles.aboutRow, { borderBottomColor: colors.border }]}>
+            <Text style={[styles.aboutLabel, { color: colors.textPrimary }]}>Quit Gambling App</Text>
+            <Text style={[styles.aboutValue, { color: colors.textSecondary }]}>v1.0.0</Text>
           </View>
           <View style={styles.aboutRow}>
-            <Text style={styles.aboutLabel}>Made for Romania</Text>
-            <Text style={styles.aboutValue}>🇷🇴</Text>
+            <Text style={[styles.aboutLabel, { color: colors.textPrimary }]}>Made for Romania</Text>
+            <Text style={[styles.aboutValue, { color: colors.textSecondary }]}>🇷🇴</Text>
           </View>
         </Card>
 
         {/* Resources */}
         <Card variant="elevated" padding={SPACING.lg}>
-          <Text style={styles.resourceTitle}>💬 Need Help?</Text>
-          <TouchableOpacity style={styles.resourceLink}>
-            <Text style={styles.resourceLinkText}>
+          <Text style={[styles.resourceTitle, { color: colors.textPrimary }]}>💬 Need Help?</Text>
+          <TouchableOpacity style={[styles.resourceLink, { borderBottomColor: colors.border }]}>
+            <Text style={[styles.resourceLinkText, { color: colors.primary }]}>
               National Hotline: 0800 XXX XXXX
             </Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.resourceLink}>
-            <Text style={styles.resourceLinkText}>
+          <TouchableOpacity style={[styles.resourceLink, { borderBottomColor: colors.border }]}>
+            <Text style={[styles.resourceLinkText, { color: colors.primary }]}>
               Gamblers Anonymous Romania Website →
             </Text>
           </TouchableOpacity>
         </Card>
 
         {/* Danger Zone */}
-        <Text style={styles.dangerSectionTitle}>Danger Zone</Text>
+        <Text style={[styles.dangerSectionTitle, { color: colors.danger }]}>Danger Zone</Text>
         <Button
           label="Log Out"
           variant="danger"
@@ -171,7 +174,6 @@ export default function SettingsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.background,
   },
   scrollContent: {
     paddingHorizontal: SPACING.lg,
@@ -179,12 +181,10 @@ const styles = StyleSheet.create({
   },
   title: {
     ...TYPOGRAPHY.h2,
-    color: COLORS.textPrimary,
     marginBottom: SPACING.xl,
   },
   sectionTitle: {
     ...TYPOGRAPHY.h3,
-    color: COLORS.textPrimary,
     marginBottom: SPACING.lg,
     marginTop: SPACING.lg,
   },
@@ -195,13 +195,11 @@ const styles = StyleSheet.create({
   },
   settingLabel: {
     ...TYPOGRAPHY.body,
-    color: COLORS.textPrimary,
     fontWeight: '600',
     marginBottom: SPACING.xs,
   },
   settingValue: {
     ...TYPOGRAPHY.bodySmall,
-    color: COLORS.textSecondary,
   },
   settingIcon: {
     fontSize: 24,
@@ -212,35 +210,28 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: SPACING.sm,
     borderBottomWidth: 1,
-    borderBottomColor: COLORS.border,
   },
   aboutLabel: {
     ...TYPOGRAPHY.body,
-    color: COLORS.textPrimary,
   },
   aboutValue: {
     ...TYPOGRAPHY.body,
-    color: COLORS.textSecondary,
     fontWeight: '600',
   },
   resourceTitle: {
     ...TYPOGRAPHY.body,
-    color: COLORS.textPrimary,
     fontWeight: '600',
     marginBottom: SPACING.md,
   },
   resourceLink: {
     paddingVertical: SPACING.md,
     borderBottomWidth: 1,
-    borderBottomColor: COLORS.border,
   },
   resourceLinkText: {
     ...TYPOGRAPHY.body,
-    color: COLORS.primary,
   },
   dangerSectionTitle: {
     ...TYPOGRAPHY.h3,
-    color: COLORS.danger,
     marginBottom: SPACING.lg,
     marginTop: SPACING.xl,
   },
