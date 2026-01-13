@@ -3,8 +3,9 @@
  */
 
 import React from 'react';
-import { StyleSheet, Text, View, useColorScheme } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { COLORS, SPACING, TYPOGRAPHY } from '../../constants/config';
+import { useEffectiveColorScheme } from '../../hooks/useEffectiveColorScheme';
 
 interface StreakHeaderProps {
   days: number;
@@ -12,7 +13,7 @@ interface StreakHeaderProps {
 }
 
 export const StreakHeader: React.FC<StreakHeaderProps> = ({ days, lastCheckIn }) => {
-  const colorScheme = useColorScheme();
+  const colorScheme = useEffectiveColorScheme();
   const colors = COLORS[colorScheme === 'dark' ? 'dark' : 'light'];
 
   const getMotivation = (days: number) => {

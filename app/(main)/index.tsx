@@ -1,14 +1,13 @@
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
-  Alert,
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-  useColorScheme,
+    Alert,
+    SafeAreaView,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
 } from 'react-native';
 import { Button } from '../../src/components/atoms/Button';
 import { Card } from '../../src/components/atoms/Card';
@@ -17,13 +16,14 @@ import { CheckInCard } from '../../src/components/molecules/CheckInCard';
 import { StreakHeader } from '../../src/components/molecules/StreakHeader';
 import { COLORS, SPACING, TYPOGRAPHY } from '../../src/constants/config';
 import { StreakCalculator } from '../../src/domain/streak/StreakCalculator';
+import { useEffectiveColorScheme } from '../../src/hooks/useEffectiveColorScheme';
 import { useUserStore } from '../../src/stores/userStore';
 
 export default function HomeScreen() {
   const router = useRouter();
   const userStore = useUserStore();
   const [showCheckInPrompt, setShowCheckInPrompt] = useState(false);
-  const colorScheme = useColorScheme();
+  const colorScheme = useEffectiveColorScheme();
   const colors = COLORS[colorScheme === 'dark' ? 'dark' : 'light'];
 
   const {

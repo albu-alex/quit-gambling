@@ -5,28 +5,33 @@
 import { useRouter } from 'expo-router';
 import React from 'react';
 import {
-  Alert,
-  ScrollView,
-  StyleSheet,
-  Switch,
-  Text,
-  TouchableOpacity,
-  View,
-  useColorScheme,
+    Alert,
+    ScrollView,
+    StyleSheet,
+    Switch,
+    Text,
+    TouchableOpacity,
+    View,
+    useColorScheme,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button } from '../../src/components/atoms/Button';
 import { Card } from '../../src/components/atoms/Card';
 import { COLORS, SPACING, TYPOGRAPHY } from '../../src/constants/config';
 import { UserStorage } from '../../src/data/storage/UserStorage';
+import { useEffectiveColorScheme } from '../../src/hooks/useEffectiveColorScheme';
 import { useNotificationStore } from '../../src/stores/notificationStore';
+import { useThemeStore } from '../../src/stores/themeStore';
 import { useUserStore } from '../../src/stores/userStore';
 
 export default function SettingsScreen() {
   const router = useRouter();
-  const colorScheme = useColorScheme();
-  const colors = COLORS[colorScheme === 'dark' ? 'dark' : 'light'];
+  const deviceColorScheme = useColorScheme();
+  const effectiveColorScheme = useEffectiveColorScheme();
+  const colors = COLORS[effectiveColorScheme === 'dark' ? 'dark' : 'light'];
   const userId = useUserStore((state) => state.userId);
+  const themeMode = useThemeStore((state) => state.themeMode);
+  const setThemeMode = useThemeStore((state) => state.setThemeMode);
   const [notificationsEnabled, toggleNotifications] = [
     useNotificationStore((state) => state.notificationsEnabled),
     useNotificationStore((state) => state.toggleNotifications),
@@ -80,6 +85,11 @@ export default function SettingsScreen() {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => router.back()}>
+            <Text style={[styles.backButton, { color: colors.primary }]}>← Back</Text>
+          </TouchableOpacity>
+        </View>
         <Text style={[styles.title, { color: colors.textPrimary }]}>Settings</Text>
 
         {/* Account Section */}
@@ -91,6 +101,67 @@ export default function SettingsScreen() {
               <Text style={[styles.settingValue, { color: colors.textSecondary }]}>{userId.substring(0, 8)}...</Text>
             </View>
           </View>
+        </Card>
+
+        {/* Appearance Section */}
+        <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>Appearance</Text>
+        <Card variant="flat" padding={SPACING.lg}>
+          <Text style={[styles.settingLabel, { color: colors.textPrimary }]}>Theme</Text>
+          <View style={styles.themeButtonsContainer}>
+            <TouchableOpacity
+              style={[
+                styles.themeButton,
+                themeMode === 'light' && { backgroundColor: colors.primary },
+              ]}
+              onPress={() => setThemeMode('light')}
+            >
+              <Text
+                style={[
+                  styles.themeButtonText,
+                  { color: themeMode === 'light' ? colors.background : colors.textPrimary },
+                ]}
+              >
+                ☀️ Light
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.themeButton,
+                themeMode === 'dark' && { backgroundColor: colors.primary },
+              ]}
+              onPress={() => setThemeMode('dark')}
+            >
+              <Text
+                style={[
+                  styles.themeButtonText,
+                  { color: themeMode === 'dark' ? colors.background : colors.textPrimary },
+                ]}
+              >
+                🌙 Dark
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.themeButton,
+                themeMode === 'system' && { backgroundColor: colors.primary },
+              ]}
+              onPress={() => setThemeMode('system')}
+            >
+              <Text
+                style={[
+                  styles.themeButtonText,
+                  { color: themeMode === 'system' ? colors.background : colors.textPrimary },
+                ]}
+              >
+                🔄 System
+              </Text>
+            </TouchableOpacity>
+          </View>
+          <Text style={[styles.themeHint, { color: colors.textSecondary }]}>
+            {themeMode === 'system'
+              ? `Using ${deviceColorScheme || 'light'} mode from device settings`
+              : `Using ${themeMode} mode`}
+          </Text>
         </Card>
 
         {/* Notifications Section */}
@@ -175,6 +246,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  header: {
+    marginBottom: SPACING.lg,
+  },
+  backButton: {
+    ...TYPOGRAPHY.body,
+    fontWeight: '600',
+  },
   scrollContent: {
     paddingHorizontal: SPACING.lg,
     paddingVertical: SPACING.lg,
@@ -203,6 +281,30 @@ const styles = StyleSheet.create({
   },
   settingIcon: {
     fontSize: 24,
+  },
+  themeButtonsContainer: {
+    flexDirection: 'row',
+    gap: SPACING.md,
+    marginVertical: SPACING.lg,
+  },
+  themeButton: {
+    flex: 1,
+    paddingVertical: SPACING.md,
+    paddingHorizontal: SPACING.sm,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  themeButtonText: {
+    ...TYPOGRAPHY.body,
+    fontWeight: '600',
+  },
+  themeHint: {
+    ...TYPOGRAPHY.bodySmall,
+    fontStyle: 'italic',
+    marginTop: SPACING.sm,
   },
   aboutRow: {
     flexDirection: 'row',

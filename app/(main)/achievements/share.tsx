@@ -12,7 +12,6 @@ import {
   Text,
   TouchableOpacity,
   View,
-  useColorScheme,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import ViewShot from 'react-native-view-shot';
@@ -20,11 +19,12 @@ import { Button } from '../../../src/components/atoms/Button';
 import { Card } from '../../../src/components/atoms/Card';
 import { COLORS, SPACING, TYPOGRAPHY } from '../../../src/constants/config';
 import { StreakCalculator } from '../../../src/domain/streak/StreakCalculator';
+import { useEffectiveColorScheme } from '../../../src/hooks/useEffectiveColorScheme';
 import { useUserStore } from '../../../src/stores/userStore';
 
 export default function ShareAchievementsScreen() {
   const router = useRouter();
-  const colorScheme = useColorScheme();
+  const colorScheme = useEffectiveColorScheme();
   const colors = COLORS[colorScheme === 'dark' ? 'dark' : 'light'];
   const [isSharing, setIsSharing] = useState(false);
   const viewShotRef = useRef<ViewShot>(null);

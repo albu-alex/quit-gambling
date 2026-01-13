@@ -4,30 +4,32 @@
 
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, useColorScheme } from 'react-native';
+import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button } from '../../../src/components/atoms/Button';
 import { Card } from '../../../src/components/atoms/Card';
 import { COLORS, SPACING, TYPOGRAPHY } from '../../../src/constants/config';
+import { useEffectiveColorScheme } from '../../../src/hooks/useEffectiveColorScheme';
 import { useSocialStore } from '../../../src/stores/socialStore';
 
 export default function AddFriendScreen() {
   const router = useRouter();
-  const colorScheme = useColorScheme();
+  const colorScheme = useEffectiveColorScheme();
   const colors = COLORS[colorScheme === 'dark' ? 'dark' : 'light'];
   const { addFriend } = useSocialStore();
   const [friendEmail, setFriendEmail] = useState('');
+  const [friendName, setFriendName] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   const handleAddFriend = async () => {
-    if (!friendEmail.trim()) {
+    if (!friendEmail.trim() || !friendName.trim()) {
       return;
     }
 
     setIsLoading(true);
     try {
-      // TODO: Implement friend request logic
-      await addFriend(friendEmail);
+      // TODO: Implement friend request logic with actual userId lookup
+      await addFriend(friendEmail, friendName);
       router.back();
     } catch (error) {
       console.error('Failed to add friend:', error);
@@ -57,6 +59,18 @@ export default function AddFriendScreen() {
           </Text>
 
           <View style={styles.inputContainer}>
+            <Text style={[styles.label, { color: colors.textPrimary }]}>Friend's Name</Text>
+            <TextInput
+              style={[styles.input, { borderColor: colors.border, color: colors.textPrimary, backgroundColor: colors.background }]}
+              placeholder="Friend's Name"
+              placeholderTextColor={colors.textTertiary}
+              value={friendName}
+              onChangeText={setFriendName}
+              autoCapitalize="words"
+            />
+          </View>
+
+          <View style={styles.inputContainer}>
             <Text style={[styles.label, { color: colors.textPrimary }]}>Friend's Email</Text>
             <TextInput
               style={[styles.input, { borderColor: colors.border, color: colors.textPrimary, backgroundColor: colors.background }]}
@@ -75,7 +89,7 @@ export default function AddFriendScreen() {
             size="lg"
             fullWidth
             onPress={handleAddFriend}
-            disabled={isLoading || !friendEmail.trim()}
+            disabled={isLoading || !friendEmail.trim() || !friendName.trim()}
           />
         </Card>
       </ScrollView>

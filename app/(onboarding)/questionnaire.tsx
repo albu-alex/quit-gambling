@@ -5,25 +5,25 @@
 import { useRouter } from 'expo-router';
 import React, { useRef, useState } from 'react';
 import {
-  GestureResponderEvent,
-  LayoutChangeEvent,
-  LayoutRectangle,
-  PanResponder,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-  useColorScheme,
+    GestureResponderEvent,
+    LayoutChangeEvent,
+    LayoutRectangle,
+    PanResponder,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button } from '../../src/components/atoms/Button';
 import { COLORS, SPACING, STRINGS, TYPOGRAPHY } from '../../src/constants/config';
+import { useEffectiveColorScheme } from '../../src/hooks/useEffectiveColorScheme';
 import { OnboardingAnswers } from '../../src/types';
 
 export default function QuestionnaireScreen() {
   const router = useRouter();
-  const colorScheme = useColorScheme();
+  const colorScheme = useEffectiveColorScheme();
   const colors = COLORS[colorScheme === 'dark' ? 'dark' : 'light'];
   const [slide, setSlide] = useState(0);
   const [answers, setAnswers] = useState<Partial<OnboardingAnswers>>({

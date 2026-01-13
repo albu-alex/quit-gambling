@@ -4,16 +4,17 @@
 
 import { useRouter } from 'expo-router';
 import React from 'react';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View, useColorScheme } from 'react-native';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button } from '../../../src/components/atoms/Button';
 import { Card } from '../../../src/components/atoms/Card';
 import { COLORS, SPACING, TYPOGRAPHY } from '../../../src/constants/config';
+import { useEffectiveColorScheme } from '../../../src/hooks/useEffectiveColorScheme';
 import { useSocialStore } from '../../../src/stores/socialStore';
 
 export default function FriendsScreen() {
   const router = useRouter();
-  const colorScheme = useColorScheme();
+  const colorScheme = useEffectiveColorScheme();
   const colors = COLORS[colorScheme === 'dark' ? 'dark' : 'light'];
   const { friends, getFriendsLeaderboard } = useSocialStore();
   const friendsLeaderboard = getFriendsLeaderboard();

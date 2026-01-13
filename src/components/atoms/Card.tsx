@@ -3,8 +3,9 @@
  */
 
 import React from 'react';
-import { StyleSheet, View, ViewStyle, useColorScheme } from 'react-native';
+import { StyleSheet, View, ViewStyle } from 'react-native';
 import { COLORS, RADIUS, SPACING } from '../../constants/config';
+import { useEffectiveColorScheme } from '../../hooks/useEffectiveColorScheme';
 
 interface CardProps {
   children: React.ReactNode;
@@ -19,7 +20,7 @@ export const Card: React.FC<CardProps> = ({
   style,
   padding = SPACING.lg,
 }) => {
-  const colorScheme = useColorScheme();
+  const colorScheme = useEffectiveColorScheme();
   const colors = COLORS[colorScheme === 'dark' ? 'dark' : 'light'];
 
   const cardStyle = [

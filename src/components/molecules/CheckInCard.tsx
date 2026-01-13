@@ -3,8 +3,9 @@
  */
 
 import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View, useColorScheme } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { COLORS, RADIUS, SPACING, TYPOGRAPHY } from '../../constants/config';
+import { useEffectiveColorScheme } from '../../hooks/useEffectiveColorScheme';
 import { Card } from '../atoms/Card';
 
 interface CheckInCardProps {
@@ -16,7 +17,7 @@ export const CheckInCard: React.FC<CheckInCardProps> = ({
   onCheckIn,
   disabled = false,
 }) => {
-  const colorScheme = useColorScheme();
+  const colorScheme = useEffectiveColorScheme();
   const colors = COLORS[colorScheme === 'dark' ? 'dark' : 'light'];
 
   return (
@@ -26,23 +27,41 @@ export const CheckInCard: React.FC<CheckInCardProps> = ({
 
       <View style={styles.buttonContainer}>
         <TouchableOpacity
-          style={[styles.button, styles.noButton, { borderColor: colors.success }]}
+          style={[
+            styles.button,
+            styles.noButton,
+            {
+              borderColor: colors.success,
+              backgroundColor: colorScheme === 'dark' ? '#064E3B' : '#F0FDF4',
+            },
+          ]}
           onPress={() => onCheckIn(false)}
           disabled={disabled}
           activeOpacity={0.8}
         >
           <Text style={styles.buttonEmoji}>💪</Text>
-          <Text style={[styles.buttonText as any, { color: colors.textPrimary }]}>No, I stayed strong</Text>
+          <Text style={[styles.buttonText as any, { color: colors.textPrimary }]}>
+            No, I stayed strong
+          </Text>
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={[styles.button, styles.yesButton, { borderColor: colors.danger }]}
+          style={[
+            styles.button,
+            styles.yesButton,
+            {
+              borderColor: colors.danger,
+              backgroundColor: colorScheme === 'dark' ? '#7F1D1D' : '#FEF2F2',
+            },
+          ]}
           onPress={() => onCheckIn(true)}
           disabled={disabled}
           activeOpacity={0.8}
         >
           <Text style={styles.buttonEmoji}>😔</Text>
-          <Text style={[styles.buttonText as any, { color: colors.textPrimary }]}>Yes, I gambled</Text>
+          <Text style={[styles.buttonText as any, { color: colors.textPrimary }]}>
+            Yes, I gambled
+          </Text>
         </TouchableOpacity>
       </View>
 
@@ -77,10 +96,10 @@ const styles = StyleSheet.create({
     borderWidth: 2,
   },
   noButton: {
-    backgroundColor: '#F0FDF4',
+    // backgroundColor is set dynamically in component
   },
   yesButton: {
-    backgroundColor: '#FEF2F2',
+    // backgroundColor is set dynamically in component
   },
   buttonEmoji: {
     fontSize: 32,

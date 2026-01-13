@@ -12,10 +12,10 @@ import {
     Text,
     TouchableOpacity,
     View,
-    useColorScheme,
 } from 'react-native';
 import { Card } from '../../../src/components/atoms/Card';
 import { COLORS, SPACING, TYPOGRAPHY } from '../../../src/constants/config';
+import { useEffectiveColorScheme } from '../../../src/hooks/useEffectiveColorScheme';
 
 interface Game {
   id: string;
@@ -51,7 +51,7 @@ const GAMES: Game[] = [
 
 export default function GamesScreen() {
   const router = useRouter();
-  const colorScheme = useColorScheme();
+  const colorScheme = useEffectiveColorScheme();
   const colors = COLORS[colorScheme === 'dark' ? 'dark' : 'light'];
   const [selectedGame, setSelectedGame] = useState<string | null>(null);
 
@@ -93,6 +93,9 @@ export default function GamesScreen() {
       >
         {/* Header */}
         <View style={styles.header}>
+          <TouchableOpacity onPress={() => router.back()}>
+            <Text style={[styles.backButton, { color: colors.primary }]}>← Back</Text>
+          </TouchableOpacity>
           <Text style={[styles.title as any, { color: colors.textPrimary }]}>Protect Your Streak</Text>
           <Text style={[styles.subtitle as any, { color: colors.textSecondary }]}>
             Play a quick game when you feel the urge to gamble. Every game helps!
@@ -156,6 +159,11 @@ const styles = StyleSheet.create({
   },
   header: {
     marginBottom: SPACING.xl,
+  },
+  backButton: {
+    ...TYPOGRAPHY.body,
+    fontWeight: '600',
+    marginBottom: SPACING.md,
   },
   title: {
     ...TYPOGRAPHY.h2,

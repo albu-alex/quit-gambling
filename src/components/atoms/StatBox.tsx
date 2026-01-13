@@ -3,8 +3,9 @@
  */
 
 import React from 'react';
-import { StyleSheet, Text, View, useColorScheme } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { COLORS, RADIUS, SPACING, TYPOGRAPHY } from '../../constants/config';
+import { useEffectiveColorScheme } from '../../hooks/useEffectiveColorScheme';
 
 interface StatBoxProps {
   label: string;
@@ -19,7 +20,7 @@ export const StatBox: React.FC<StatBoxProps> = ({
   icon,
   color = COLORS.light.primary,
 }) => {
-  const colorScheme = useColorScheme();
+  const colorScheme = useEffectiveColorScheme();
   const colors = COLORS[colorScheme === 'dark' ? 'dark' : 'light'];
 
   return (

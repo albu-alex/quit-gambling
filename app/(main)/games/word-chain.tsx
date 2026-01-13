@@ -12,10 +12,10 @@ import {
     Text,
     TextInput,
     View,
-    useColorScheme
 } from 'react-native';
 import { Button } from '../../../src/components/atoms/Button';
 import { COLORS, SPACING, TYPOGRAPHY } from '../../../src/constants/config';
+import { useEffectiveColorScheme } from '../../../src/hooks/useEffectiveColorScheme';
 
 const GAME_DURATION = 60; // 60 seconds
 const STARTING_WORDS = [
@@ -40,7 +40,7 @@ const COMMON_WORDS = [
 
 export default function WordChainScreen() {
   const router = useRouter();
-  const colorScheme = useColorScheme();
+  const colorScheme = useEffectiveColorScheme();
   const colors = COLORS[colorScheme === 'dark' ? 'dark' : 'light'];
 
   const [score, setScore] = useState(0);

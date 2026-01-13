@@ -4,17 +4,18 @@
 
 import { useRouter } from 'expo-router';
 import React from 'react';
-import { ScrollView, StyleSheet, Text, View, useColorScheme } from 'react-native';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button } from '../../../src/components/atoms/Button';
 import { Card } from '../../../src/components/atoms/Card';
 import { COLORS, SPACING, TYPOGRAPHY } from '../../../src/constants/config';
 import { StreakCalculator } from '../../../src/domain/streak/StreakCalculator';
+import { useEffectiveColorScheme } from '../../../src/hooks/useEffectiveColorScheme';
 import { useUserStore } from '../../../src/stores/userStore';
 
 export default function AchievementsScreen() {
   const router = useRouter();
-  const colorScheme = useColorScheme();
+  const colorScheme = useEffectiveColorScheme();
   const colors = COLORS[colorScheme === 'dark' ? 'dark' : 'light'];
   const currentStreak = useUserStore((state) => state.currentStreak);
   const unlockedMilestones = StreakCalculator.getUnlockedMilestones(currentStreak);
@@ -26,6 +27,11 @@ export default function AchievementsScreen() {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => router.back()}>
+            <Text style={[styles.backButton, { color: colors.primary }]}>← Back</Text>
+          </TouchableOpacity>
+        </View>
         <Text style={[styles.title, { color: colors.textPrimary }]}>Achievements</Text>
 
         {/* Unlocked Achievements */}
@@ -88,6 +94,13 @@ export default function AchievementsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  header: {
+    marginBottom: SPACING.lg,
+  },
+  backButton: {
+    ...TYPOGRAPHY.body,
+    fontWeight: '600',
   },
   scrollContent: {
     paddingHorizontal: SPACING.lg,

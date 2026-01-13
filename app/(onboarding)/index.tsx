@@ -4,14 +4,15 @@
 
 import { useRouter } from 'expo-router';
 import React from 'react';
-import { StyleSheet, Text, View, useColorScheme } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button } from '../../src/components/atoms/Button';
 import { COLORS, SPACING, STRINGS, TYPOGRAPHY } from '../../src/constants/config';
+import { useEffectiveColorScheme } from '../../src/hooks/useEffectiveColorScheme';
 
 export default function WelcomeScreen() {
   const router = useRouter();
-  const colorScheme = useColorScheme();
+  const colorScheme = useEffectiveColorScheme();
   const colors = COLORS[colorScheme === 'dark' ? 'dark' : 'light'];
 
   const handleStart = () => {

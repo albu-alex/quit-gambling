@@ -12,10 +12,10 @@ import {
     Text,
     TouchableOpacity,
     View,
-    useColorScheme,
 } from 'react-native';
 import { Button } from '../../../src/components/atoms/Button';
 import { COLORS, SPACING, TYPOGRAPHY } from '../../../src/constants/config';
+import { useEffectiveColorScheme } from '../../../src/hooks/useEffectiveColorScheme';
 
 const GAME_DURATION = 60; // 60 seconds
 const COLORS_LIST = [
@@ -27,7 +27,7 @@ const COLORS_LIST = [
 
 export default function ColorMatchScreen() {
   const router = useRouter();
-  const colorScheme = useColorScheme();
+  const colorScheme = useEffectiveColorScheme();
   const colors = COLORS[colorScheme === 'dark' ? 'dark' : 'light'];
   const windowWidth = Dimensions.get('window').width;
 

@@ -10,9 +10,9 @@ import {
     TextStyle,
     TouchableOpacity,
     ViewStyle,
-    useColorScheme,
 } from 'react-native';
 import { COLORS, RADIUS, SPACING } from '../../constants/config';
+import { useEffectiveColorScheme } from '../../hooks/useEffectiveColorScheme';
 
 interface ButtonProps {
   onPress: () => void;
@@ -33,7 +33,7 @@ export const Button: React.FC<ButtonProps> = ({
   loading = false,
   fullWidth = false,
 }) => {
-  const colorScheme = useColorScheme();
+  const colorScheme = useEffectiveColorScheme();
   const colors = COLORS[colorScheme === 'dark' ? 'dark' : 'light'];
   
   const buttonStyle = [

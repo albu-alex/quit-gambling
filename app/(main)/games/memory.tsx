@@ -11,11 +11,11 @@ import {
     Text,
     TouchableOpacity,
     View,
-    useColorScheme,
 } from 'react-native';
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 import { Button } from '../../../src/components/atoms/Button';
 import { COLORS, SPACING, TYPOGRAPHY } from '../../../src/constants/config';
+import { useEffectiveColorScheme } from '../../../src/hooks/useEffectiveColorScheme';
 
 interface Card {
   id: number;
@@ -29,7 +29,7 @@ const GRID_SIZE = 4;
 
 export default function MemoryGameScreen() {
   const router = useRouter();
-  const colorScheme = useColorScheme();
+  const colorScheme = useEffectiveColorScheme();
   const colors = COLORS[colorScheme === 'dark' ? 'dark' : 'light'];
   const params = useLocalSearchParams();
   const [cards, setCards] = useState<Card[]>([]);
