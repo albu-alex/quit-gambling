@@ -3,18 +3,19 @@
  */
 
 import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import {
-    Alert,
-    ScrollView,
-    Share,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
-    useColorScheme,
+  Alert,
+  ScrollView,
+  Share,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  useColorScheme,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import ViewShot from 'react-native-view-shot';
 import { Button } from '../../../src/components/atoms/Button';
 import { Card } from '../../../src/components/atoms/Card';
 import { COLORS, SPACING, TYPOGRAPHY } from '../../../src/constants/config';
@@ -26,6 +27,7 @@ export default function ShareAchievementsScreen() {
   const colorScheme = useColorScheme();
   const colors = COLORS[colorScheme === 'dark' ? 'dark' : 'light'];
   const [isSharing, setIsSharing] = useState(false);
+  const viewShotRef = useRef<ViewShot>(null);
 
   const currentStreak = useUserStore((state) => state.currentStreak);
   const createdAt = useUserStore((state) => state.createdAt);
@@ -40,7 +42,11 @@ export default function ShareAchievementsScreen() {
   const handleShare = async () => {
     setIsSharing(true);
     try {
-      const message = `🎉 I've been gambling-free for ${currentStreak} days! 
+      // Capture the achievement card as an image
+      if (viewShotRef && viewShotRef.current && viewShotRef.current.capture) {
+        const imageUri = await viewShotRef.current.capture();
+        
+        const message = `🎉 I've been gambling-free for ${currentStreak} days! 
                         💪 My Recovery Stats:
                         • Days in recovery: ${daysInRecovery}
                         • Current streak: ${currentStreak} days
@@ -51,10 +57,12 @@ export default function ShareAchievementsScreen() {
 
                         Join me on this journey to recovery! Download the Quit Gambling app and start your own journey today.`;
 
-      await Share.share({
-        message,
-        title: '🏆 My Recovery Journey',
-      });
+        await Share.share({
+          url: imageUri,
+          message,
+          title: '🏆 My Recovery Journey',
+        });
+      }
     } catch (error) {
       Alert.alert('Error', 'Failed to share');
       console.error('Share error:', error);
@@ -92,14 +100,18 @@ export default function ShareAchievementsScreen() {
         </View>
 
         {/* Achievement Card Preview */}
-        <Card 
-          variant="elevated" 
-          padding={SPACING.xl} 
-          style={{
-            ...styles.shareableCard,
-            backgroundColor: colors.primary,
-          }}
+        <ViewShot
+          ref={viewShotRef}
+          options={{ format: 'png', quality: 0.95 }}
         >
+          <Card 
+            variant="elevated" 
+            padding={SPACING.xl} 
+            style={{
+              ...styles.shareableCard,
+              backgroundColor: colors.primary,
+            }}
+          >
           <View style={styles.cardContent}>
             <Text style={styles.cardEmoji}>🏆</Text>
             <Text style={[styles.cardTitle, { color: colors.background }]}>
@@ -120,7 +132,7 @@ export default function ShareAchievementsScreen() {
 
               <View style={styles.statBox}>
                 <Text style={[styles.statValue, { color: colors.background }]}>
-                  ${Math.floor(moneySaved)}
+                  RON {Math.floor(moneySaved)}
                 </Text>
                 <Text style={[styles.statLabel, { color: colors.background }]}>
                   Money Saved
@@ -148,6 +160,7 @@ export default function ShareAchievementsScreen() {
             </Text>
           </View>
         </Card>
+        </ViewShot>
 
         <Card variant="elevated" padding={SPACING.lg}>
           <Text style={[styles.optionTitle, { color: colors.textPrimary }]}>Share Your Achievement</Text>
