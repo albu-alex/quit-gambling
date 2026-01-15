@@ -32,6 +32,11 @@ yarn-error.*
 
 # local env files
 .env*.local
+.env
+.env.production
+
+# Encryption keys (NEVER COMMIT)
+.env.keys
 
 # typescript
 *.tsbuildinfo
@@ -41,3 +46,9 @@ app-example
 # generated native folders
 /ios
 /android
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo

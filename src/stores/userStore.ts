@@ -1,6 +1,7 @@
 /**
  * User Store - Zustand + AsyncStorage persistence
  * Handles profile, onboarding, and streak data
+ * Integrated with Firebase for authentication and analytics
  */
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -8,6 +9,9 @@ import { v4 as uuidv4 } from 'uuid';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { UserStorage } from '../data/storage/UserStorage';
+import {
+    logCheckInEvent
+} from '../services/firebase/analytics';
 import { CheckInRecord, OnboardingAnswers, StreakData, UserProfile } from '../types';
 
 interface UserState extends UserProfile, StreakData {
@@ -122,6 +126,13 @@ export const useUserStore = create<UserState>()(
           lastCheckInDate: now,
           totalAbstinenceDays: newTotal,
         });
+
+        // Log analytics event
+        try {
+          await logCheckInEvent(state.userId, newStreak, gambled);
+        } catch (error) {
+          console.warn('Failed to log check-in analytics:', error);
+        }
       },
 
       // Manual streak reset (for recovery)

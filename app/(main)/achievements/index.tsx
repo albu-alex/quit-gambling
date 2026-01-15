@@ -34,7 +34,6 @@ export default function AchievementsScreen() {
         </View>
         <Text style={[styles.title, { color: colors.textPrimary }]}>Achievements</Text>
 
-        {/* Unlocked Achievements */}
         {unlockedMilestones.length > 0 && (
           <>
             <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>🏆 Unlocked</Text>
@@ -54,7 +53,6 @@ export default function AchievementsScreen() {
           </>
         )}
 
-        {/* Locked Achievements */}
         <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>🔒 Locked</Text>
         {allMilestones
           .filter((m) => m.days > currentStreak)
@@ -72,7 +70,6 @@ export default function AchievementsScreen() {
             </Card>
           ))}
 
-        {/* Share Section */}
         <Card variant="elevated" padding={SPACING.lg}>
           <Text style={[styles.shareTitle, { color: colors.textPrimary }]}>📸 Share Your Win</Text>
           <Text style={[styles.shareText, { color: colors.textSecondary }]}>

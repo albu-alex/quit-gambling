@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import 'react-native-reanimated';
 
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { logAppOpenedEvent } from '@/src/services/firebase/analytics';
 import { useThemeStore } from '@/src/stores/themeStore';
 import { useUserStore } from '@/src/stores/userStore';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
@@ -13,6 +14,7 @@ export default function RootLayout() {
   const themeMode = useThemeStore((state) => state.themeMode);
   const themeHydrated = useThemeStore((state) => state._hasHydrated);
   const isOnboarded = useUserStore((state) => state.isOnboarded);
+  const userId = useUserStore((state) => state.userId);
   const hasHydrated = useUserStore((state) => state._hasHydrated);
   const [isReady, setIsReady] = useState(false);
 
@@ -23,8 +25,15 @@ export default function RootLayout() {
   useEffect(() => {
     if (hasHydrated && themeHydrated) {
       setIsReady(true);
+
+      // Log app opened event when app initializes
+      if (isOnboarded && userId) {
+        logAppOpenedEvent(userId).catch((error) => {
+          console.warn('Failed to log app opened event:', error);
+        });
+      }
     }
-  }, [hasHydrated, themeHydrated]);
+  }, [hasHydrated, themeHydrated, isOnboarded, userId]);
 
   if (!isReady) {
     return null;
