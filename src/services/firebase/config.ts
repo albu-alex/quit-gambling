@@ -1,6 +1,7 @@
 /**
  * Firebase Configuration & Initialization
  * Environment variables are loaded from .env files (encrypted with dotenvx)
+ * NOTE: Analytics disabled on React Native to prevent DOM access errors
  */
 
 import {
@@ -12,10 +13,6 @@ import {
     onAuthStateChanged
 } from '@firebase/auth';
 import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
-import {
-    Analytics,
-    getAnalytics
-} from 'firebase/analytics';
 import { FirebaseApp, initializeApp } from 'firebase/app';
 import {
     Firestore,
@@ -58,7 +55,6 @@ const firebaseConfig = {
 let app: FirebaseApp | undefined;
 let auth: Auth | undefined;
 let db: Firestore | undefined;
-let analytics: Analytics | undefined;
 let isFirebaseInitialized = false;
 
 if (
@@ -85,17 +81,6 @@ if (
     }
     
     db = getFirestore(app);
-    
-    // Initialize analytics if measurement ID is available
-    // Skip on React Native - Analytics requires DOM which doesn't exist
-    if (firebaseConfig.measurementId && typeof window !== 'undefined') {
-      try {
-        analytics = getAnalytics(app);
-      } catch (analyticsError) {
-        console.warn('⚠️ Failed to initialize Analytics (likely React Native environment):', analyticsError);
-        // Analytics is optional, continue without it
-      }
-    }
 
     isFirebaseInitialized = true;
     console.log('✅ Firebase initialized successfully');
@@ -110,14 +95,12 @@ if (
 }
 
 export {
-    analytics,
     app,
     auth,
     db,
     FirebaseUser,
     isFirebaseInitialized,
     onAuthStateChanged,
-    type Analytics,
     type Auth,
     type FirebaseApp,
     type Firestore

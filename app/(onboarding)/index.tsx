@@ -4,7 +4,7 @@
 
 import { useRouter } from 'expo-router';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button } from '../../src/components/atoms/Button';
 import { COLORS, SPACING, STRINGS, TYPOGRAPHY } from '../../src/constants/config';
@@ -17,6 +17,14 @@ export default function WelcomeScreen() {
 
   const handleStart = () => {
     router.push('/questionnaire');
+  };
+
+  const handleLogin = () => {
+    router.push({ pathname: '/login' } as any);
+  };
+
+  const handleSignup = () => {
+    router.push({ pathname: '/signup' } as any);
   };
 
   return (
@@ -51,14 +59,41 @@ export default function WelcomeScreen() {
           </View>
         </View>
 
-        {/* CTA Button */}
-        <Button
-          label={STRINGS.onboarding.welcome.cta}
-          variant="primary"
-          size="lg"
-          fullWidth
-          onPress={handleStart}
-        />
+        {/* Auth Buttons */}
+        <View style={styles.authSection}>
+          {/* Sign In Button */}
+          <Button
+            label="Sign In"
+            variant="primary"
+            size="lg"
+            fullWidth
+            onPress={handleLogin}
+          />
+
+          {/* Create Account Button */}
+          <Button
+            label="Create Account"
+            variant="secondary"
+            size="lg"
+            fullWidth
+            onPress={handleSignup}
+          />
+
+          {/* Divider */}
+          <View style={styles.dividerContainer}>
+            <View style={[styles.divider, { backgroundColor: colors.border }]} />
+            <Text style={[styles.dividerText, { color: colors.textTertiary }]}>OR</Text>
+            <View style={[styles.divider, { backgroundColor: colors.border }]} />
+          </View>
+
+          {/* Try Without Account */}
+          <TouchableOpacity
+            style={[styles.tryButton, { borderColor: colors.primary }]}
+            onPress={handleStart}
+          >
+            <Text style={[styles.tryButtonText, { color: colors.primary }]}>Try Without Account</Text>
+          </TouchableOpacity>
+        </View>
 
         {/* Footer text */}
         <Text style={[styles.footer as any, { color: colors.textTertiary }]}>
@@ -110,6 +145,35 @@ const styles = StyleSheet.create({
   pointText: {
     ...TYPOGRAPHY.body,
     flex: 1,
+  },
+  authSection: {
+    marginVertical: SPACING.lg,
+  },
+  dividerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: SPACING.lg,
+  },
+  divider: {
+    flex: 1,
+    height: 1,
+  },
+  dividerText: {
+    marginHorizontal: SPACING.md,
+    fontSize: TYPOGRAPHY.caption.fontSize,
+    fontWeight: '600',
+  },
+  tryButton: {
+    borderWidth: 2,
+    borderRadius: 8,
+    paddingVertical: SPACING.md,
+    paddingHorizontal: SPACING.lg,
+    alignItems: 'center',
+    marginTop: SPACING.md,
+  },
+  tryButtonText: {
+    fontSize: TYPOGRAPHY.body.fontSize,
+    fontWeight: '600',
   },
   footer: {
     ...TYPOGRAPHY.bodySmall,

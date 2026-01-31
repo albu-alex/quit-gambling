@@ -15,9 +15,12 @@ import {
 import { CheckInRecord, OnboardingAnswers, StreakData, UserProfile } from '../types';
 
 interface UserState extends UserProfile, StreakData {
-  // Profile
+  // Profile & Auth
   userId: string;
+  userEmail: string | null;
+  isAuthenticated: boolean;
   isOnboarded: boolean;
+  questionnaireCompleted: boolean;
   createdAt: string;
   onboardingAnswers?: OnboardingAnswers;
   _hasHydrated: boolean;
@@ -32,6 +35,7 @@ interface UserState extends UserProfile, StreakData {
 
   // Actions
   completeOnboarding: (answers: OnboardingAnswers) => Promise<void>;
+  completeQuestionnaire: () => Promise<void>;
   recordCheckIn: (gambled: boolean) => Promise<void>;
   resetStreak: () => Promise<void>;
   getStreakStatus: () => { streakDays: number; lastCheckIn: string | null };
@@ -43,7 +47,10 @@ export const useUserStore = create<UserState>()(
     (set, get) => ({
       // Initial state
       userId: '',
+      userEmail: null,
+      isAuthenticated: false,
       isOnboarded: false,
+      questionnaireCompleted: false,
       createdAt: new Date().toISOString(),
       onboardingAnswers: undefined,
       _hasHydrated: false,
@@ -73,6 +80,13 @@ export const useUserStore = create<UserState>()(
 
         // Encrypt and store answers securely
         await UserStorage.saveSecureAnswers(userId, answers);
+      },
+
+      // Mark questionnaire as completed (without full onboarding)
+      completeQuestionnaire: async () => {
+        set({
+          questionnaireCompleted: true,
+        });
       },
 
       // Record daily check-in
@@ -180,7 +194,10 @@ export const useUserStore = create<UserState>()(
       // Only persist safe public data
       partialize: (state) => ({
         userId: state.userId,
+        userEmail: state.userEmail,
+        isAuthenticated: state.isAuthenticated,
         isOnboarded: state.isOnboarded,
+        questionnaireCompleted: state.questionnaireCompleted,
         createdAt: state.createdAt,
         currentStreak: state.currentStreak,
         longestStreak: state.longestStreak,

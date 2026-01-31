@@ -19,12 +19,14 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button } from '../../src/components/atoms/Button';
 import { COLORS, SPACING, STRINGS, TYPOGRAPHY } from '../../src/constants/config';
 import { useEffectiveColorScheme } from '../../src/hooks/useEffectiveColorScheme';
+import { useUserStore } from '../../src/stores/userStore';
 import { OnboardingAnswers } from '../../src/types';
 
 export default function QuestionnaireScreen() {
   const router = useRouter();
   const colorScheme = useEffectiveColorScheme();
   const colors = COLORS[colorScheme === 'dark' ? 'dark' : 'light'];
+  const completeQuestionnaire = useUserStore((state) => state.completeQuestionnaire);
   const [slide, setSlide] = useState(0);
   const [answers, setAnswers] = useState<Partial<OnboardingAnswers>>({
     yearsGambling: 0,
@@ -80,8 +82,9 @@ export default function QuestionnaireScreen() {
     if (slide < 3) {
       setSlide(slide + 1);
     } else {
-      // All slides complete, go to trial offer
-      router.push('/trial-offer');
+      // All slides complete, mark questionnaire as done and go to login
+      completeQuestionnaire();
+      router.push('/(onboarding)/login');
     }
   };
 

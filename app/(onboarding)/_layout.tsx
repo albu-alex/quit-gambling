@@ -24,6 +24,18 @@ export default function OnboardingLayout() {
         }}
       />
       <Stack.Screen
+        name="login"
+        options={{
+          title: 'Sign In',
+        }}
+      />
+      <Stack.Screen
+        name="signup"
+        options={{
+          title: 'Create Account',
+        }}
+      />
+      <Stack.Screen
         name="questionnaire"
         options={{
           title: 'Tell Us About You',

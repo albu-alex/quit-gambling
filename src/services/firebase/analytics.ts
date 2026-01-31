@@ -1,13 +1,8 @@
 /**
  * Firebase Analytics Service
- * Tracks app usage, feature engagement, and user behavior
+ * Tracks app usage via Firestore only (Firebase Analytics SDK disabled on React Native)
  */
 
-import {
-    setUserProperties as firebaseSetUserProperties,
-    logEvent,
-    type Analytics,
-} from 'firebase/analytics';
 import {
     collection,
     doc,
@@ -19,10 +14,9 @@ import {
     updateDoc,
     type Firestore
 } from 'firebase/firestore';
-import { analytics, db, isFirebaseInitialized } from './config';
+import { db, isFirebaseInitialized } from './config';
 
 // Type the imported Firebase instances
-const typedAnalytics = analytics as Analytics | undefined;
 const typedDb = db as Firestore | undefined;
 
 export interface AnalyticsEvent {
@@ -51,18 +45,6 @@ export interface UserStats {
  * Log an analytics event
  */
 export async function logAnalyticsEvent(event: AnalyticsEvent): Promise<void> {
-  // Log to Firebase Analytics (client-side)
-  if (typedAnalytics && isFirebaseInitialized) {
-    try {
-      logEvent(typedAnalytics, event.eventType, {
-        userId: event.userId,
-        ...event.eventData,
-      });
-    } catch (error) {
-      console.warn(`Failed to log analytics event to Firebase: ${error}`);
-    }
-  }
-
   // Log to Firestore for persistent storage and complex queries
   if (typedDb && isFirebaseInitialized) {
     try {
@@ -323,18 +305,16 @@ export async function getUserAnalyticsSummary(userId: string): Promise<Partial<U
 }
 
 /**
- * Set user properties for segmentation
+ * Set user properties for segmentation (Firestore only)
  */
 export async function setUserAnalyticsProperties(
   userId: string,
   properties: Record<string, string | number | boolean>
 ): Promise<void> {
-  if (!typedAnalytics || !isFirebaseInitialized) return;
+  if (!isFirebaseInitialized) return;
 
   try {
-    firebaseSetUserProperties(typedAnalytics, properties);
-
-    // Also store in Firestore for reference
+    // Store in Firestore for reference
     if (typedDb) {
       const userPropsRef = doc(typedDb, 'users', userId, 'properties', 'analytics');
       await setDoc(userPropsRef, {

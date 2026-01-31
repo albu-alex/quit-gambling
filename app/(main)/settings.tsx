@@ -20,7 +20,9 @@ import { Card } from '../../src/components/atoms/Card';
 import { COLORS, SPACING, TYPOGRAPHY } from '../../src/constants/config';
 import { UserStorage } from '../../src/data/storage/UserStorage';
 import { useEffectiveColorScheme } from '../../src/hooks/useEffectiveColorScheme';
+import { deleteUserAccount, logOut } from '../../src/services/firebase/auth';
 import { useNotificationStore } from '../../src/stores/notificationStore';
+import { useSocialStore } from '../../src/stores/socialStore';
 import { useThemeStore } from '../../src/stores/themeStore';
 import { useUserStore } from '../../src/stores/userStore';
 
@@ -48,12 +50,40 @@ export default function SettingsScreen() {
           style: 'destructive',
           onPress: async () => {
             try {
+              // 1. Delete from Firebase (account + all data)
+              await deleteUserAccount(userId);
+
+              // 2. Clear all local user data from AsyncStorage
               await UserStorage.deleteUserData(userId);
-              // Reset store and navigate to onboarding
-              useUserStore.setState({ isOnboarded: false });
+
+              // 3. Clear user store
+              useUserStore.setState({
+                userId: '',
+                userEmail: null,
+                isAuthenticated: false,
+                isOnboarded: false,
+                createdAt: new Date().toISOString(),
+                currentStreak: 0,
+                longestStreak: 0,
+                lastCheckInDate: null,
+                checkInHistory: [],
+                totalAbstinenceDays: 0,
+                onboardingAnswers: undefined,
+              });
+
+              // 4. Clear social store
+              useSocialStore.setState({
+                friends: [],
+                leaderboard: [],
+                incomingFriendRequests: [],
+                outgoingFriendRequests: [],
+              });
+
+              // 5. Navigate to onboarding
               router.replace('/');
             } catch (error) {
-              Alert.alert('Error', 'Failed to delete account');
+              console.error('Account deletion error:', error);
+              Alert.alert('Error', 'Failed to delete account. Please try again.');
             }
           },
         },
@@ -70,9 +100,49 @@ export default function SettingsScreen() {
         {
           text: 'Log Out',
           style: 'destructive',
-          onPress: () => {
-            useUserStore.setState({ isOnboarded: false });
-            router.replace('/');
+          onPress: async () => {
+            try {
+              const userId = useUserStore.getState().userId;
+              const questionnaireCompleted = useUserStore.getState().questionnaireCompleted;
+
+              // 1. Sign out from Firebase
+              await logOut();
+
+              // 2. Clear all local user data from AsyncStorage
+              if (userId) {
+                await UserStorage.deleteUserData(userId);
+              }
+
+              // 3. Clear entire user store but preserve questionnaireCompleted
+              useUserStore.setState({
+                userId: '',
+                userEmail: null,
+                isAuthenticated: false,
+                isOnboarded: false,
+                questionnaireCompleted: questionnaireCompleted, // Preserve this
+                createdAt: new Date().toISOString(),
+                currentStreak: 0,
+                longestStreak: 0,
+                lastCheckInDate: null,
+                checkInHistory: [],
+                totalAbstinenceDays: 0,
+                onboardingAnswers: undefined,
+              });
+
+              // 4. Clear social store
+              useSocialStore.setState({
+                friends: [],
+                leaderboard: [],
+                incomingFriendRequests: [],
+                outgoingFriendRequests: [],
+              });
+
+              // 5. Navigate to login screen (not welcome)
+              router.replace('/(onboarding)/login');
+            } catch (error) {
+              console.error('Logout error:', error);
+              Alert.alert('Error', 'Failed to log out completely. Please try again.');
+            }
           },
         },
       ]
